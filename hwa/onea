@@ -73,7 +73,9 @@ main:- tests, testNepotism.
 :- op(800, xfy, and).
 :- op(801, xfy, or).
 :- op(702, fx, not).
-:- op(, xfx, had)
+:- op(703, xfy, had).
+:- op(704, xfx,  in).
+:- op(705, xfy, has).
 
 rule1 if a then b.
 
@@ -336,4 +338,4 @@ allOps :- setof([P,A,X],current_op(P,A,X),L), prints(L).
 %[1200,xfx,:-]
 
 :- main.
-%:- halt.
+:- halt.
