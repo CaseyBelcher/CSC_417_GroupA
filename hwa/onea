@@ -138,6 +138,10 @@ then
 % hint: implement right associative "had". see has(X and Y)
 % for an example on how that is done
 
+had(X and Y) :- had(X), had(Y).
+had(X or Y) :- had(X); had(Y).
+had(not(X)) :- not(had(X)).
+
 tests :- forall(test(N), test1(N)).
 
 test1(X) :-
