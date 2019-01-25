@@ -1,5 +1,9 @@
 # CSC_417_GroupA
 
+## Homework A
+By Austen Adler, Bryan Arrington, and Casey Belcher
 
-
-testing codeanywhere 
+Run:
+```bash
+./hwa/onea
+```
