@@ -192,8 +192,15 @@ testNepotism :-
 had(X and Y)      :- had(X), had(Y).
 had(X =Id had Y)  :- fact(X,Id,Fs),  b4(Y,Fs).
 
+had(X=Id had Y had Z in L) :- fact(X,Id,Fs), b4(Y,Fs), in(Z, L, Fs).
+
 b4(X had Y,Fs)    :- b4(X,Fs), b4(Y,Fs).
 b4(X =  Y, Fs)    :- member(X=Y,Fs).
+b4(X had Y in L, Fs) :- b4(X,Fs), in(Y, L, Fs).
+b4(X =< Y, Fs)    :- member(X=Z, Fs), Z =< Y.
+b4(X > Y, Fs)     :- member(X=Z, Fs), Z > Y.
+
+in(X, [Y|Z], Fs) :- member(X=Y, Fs); in(X, Z, Fs).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is a complete implementation of "has"
