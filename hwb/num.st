@@ -5,7 +5,7 @@ FileStream fileIn: 'my.st' !
 Magic sub: #Num has: 'n mu m2 sd id lo hi txt w'
 
 ! Num methods !
-init: text
+init
   n := 0.
   mu := 0.
   m2 := 0.
@@ -13,9 +13,27 @@ init: text
   id := 0.
   lo := 10 raisedTo: 32.
   hi := (-1 * 10) raisedTo: 32.
-  txt := text.
+  txt := txt.
   w := 1 
-  !!
+  !
+
+"Populate the Num with an array of numbers"
+nextPutAll: array
+  | sum mean sqDiff |
+  
+  n := array size.
+  mu := array at: (n / 2).
+  
+  sum := 0.
+  array do: [:a | sum := sum + a].
+  mean := (sum / n).
+  
+  sqDiff := array collect: [:b | ((b - mean) squared)].
+  sqDiff do: [:c | sum := sum + c].
+  mean := (sum / n).
+  
+  sd := mean asFloat.
+!!
  
 
 numInc |t x d|
