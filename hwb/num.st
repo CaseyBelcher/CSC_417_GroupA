@@ -19,20 +19,24 @@ init
 
 "Populate the Num with an array of numbers"
 nextPutAll: array
-  | sum mean sqDiff |
+  | sum mean sqDiff sum2 mean2 |
   
+  "Gets the size and the median"
   n := array size.
   mu := array at: (n / 2).
   
-  sum := 0.
+  "Gets the sum and mean of the array"
+  sum := 0 asFloat.
   array do: [:a | sum := sum + a].
   mean := (sum / n).
   
+  "Gets squared differences of means and then
+  the standard deviation"
+  sum2 := 0 asFloat.
   sqDiff := array collect: [:b | ((b - mean) squared)].
-  sqDiff do: [:c | sum := sum + c].
-  mean := (sum / n).
-  
-  sd := mean asFloat.
+  sqDiff do: [:c | sum2 := sum2 + c].
+  mean2 := (sum2 / (n - 1)).
+  sd := (mean2 sqrt) roundTo: 0.01.
 !!
  
 
@@ -50,3 +54,4 @@ numInc |t x d|
   return x
 !
 !
+
