@@ -19,16 +19,16 @@ init
 
 numInc: x
    | d |
-   x == '?' ifTrue: [^x] .
-   n := (n+1) .
-   d := (x - mu) .
-   mu := mu + (d/n) .
-   m2 := m2 + (d*(x - mu)) .
-   (x > hi) ifTrue: [(hi := x)]   .
-   (x < lo) ifTrue: [(lo := x)]   .
+   x == '?' ifTrue: [^x].
+   n := (n+1).
+   d := (x - mu).
+   mu := mu + (d/n).
+   m2 := m2 + (d*(x - mu)).
+   (x > hi) ifTrue: [(hi := x)].
+   (x < lo) ifTrue: [(lo := x)].
    (n >= 2) ifTrue:
-     [sd := (m2/(n-1+(10 raisedTo:(-32)))) raisedTo:0.5] .
-   ^x   !
+     [sd := (m2/(n-1+(10 raisedTo:(-32)))) raisedTo:0.5].
+   ^x!
 
 numDec: x
    | d |
@@ -42,7 +42,6 @@ numDec: x
    ^x.
 !
 
- nextPutAll: argArray
+nextPutAll: argArray
    argArray do: [:x| (self numInc:x)] !
-
 !
