@@ -43,5 +43,34 @@ numDec: x
 !
 
 nextPutAll: argArray
-   argArray do: [:x| (self numInc:x)] !
+   argArray do: [:x| (self numInc:x)]
+!!
+
+! Collection methodsFor: 'iterators' !
+eject: aBlock
+  ^self select: [:x| (aBlock value: x) not]
 !
+
+b4Now: aBlock
+  | b4 |
+  self do: [:now|
+    b4 = nil
+    ifFalse: [aBlock value: b4 value: now].
+    b4 := now
+  ]
+!!
+
+! Object methods !
+visit: aBlock
+	aBlock value: self.
+!!
+
+! Collection methods !
+visit: aBlock
+  self do: [:i| i visit: aBlock]
+!!
+
+! String methods !
+visit: aBlock
+  aBlock value: self.
+!!

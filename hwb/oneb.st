@@ -18,3 +18,5 @@ Collection goodB4Now !
 
 'eject: ' oo !
 Collection goodEject oo!
+
+Object goodVisit.
