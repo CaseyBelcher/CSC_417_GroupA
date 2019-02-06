@@ -137,10 +137,27 @@ printOn: aStream
      nextPutAll: ')' !
 !
 
+! Collection methodsFor: 'iterators' ! 
+eject: aBlock
+  ^self select: [:x| (aBlock value: x) not]
+!
+
+b4Now: aBlock
+  | b4 |
+  self do: [:now|
+  b4 = nil
+  ifFalse: [aBlock value: b4 value: now].
+  b4 := now]
+!!
+
 !Collection class methodsFor: 'testing' !
 goodB4Now
   #(10 21 32 43 54) b4Now: [:b4 :now|
-    ((now-b4)/b4) asFloat oo] !!
+    ((now-b4)/b4) asFloat oo] !
+        
+goodEject
+  ^#(1 2 3) eject: [:x | x > 1.5 ] !
+!
 
 
 ! Object class methodsFor: 'testing' !
