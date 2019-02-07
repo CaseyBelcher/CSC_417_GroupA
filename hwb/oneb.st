@@ -22,5 +22,5 @@ Collection goodB4Now !
 '1b4 - Generic Visit: ' oo !
 Object goodVisit.
 
-'1b5 - testEverything: ' oo !
-Object testEverything !
+"'1b5 - testEverything: ' oo !"
+"Object testEverything !"
