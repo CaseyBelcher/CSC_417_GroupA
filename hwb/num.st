@@ -2,6 +2,7 @@
 
 FileStream fileIn: 'my.st' !
 
+"==================== 1b1 ===================="
 Magic sub: #Num has: 'n mu m2 sd id lo hi txt w'
 
 ! Num methods !
@@ -46,11 +47,13 @@ nextPutAll: argArray
    argArray do: [:x| (self numInc:x)]
 !!
 
+"==================== 1b2 ===================="
 ! Collection methodsFor: 'iterators' !
 eject: aBlock
   ^self select: [:x| (aBlock value: x) not]
 !
 
+"==================== 1b3 ===================="
 b4Now: aBlock
   | b4 |
   self do: [:now|
@@ -60,6 +63,17 @@ b4Now: aBlock
   ]
 !!
 
+"=========== 1b2+1b3 test methods ============"
+!Collection class methodsFor: 'testing' !
+goodB4Now
+  #(10 21 32 43 54) b4Now: [:b4 :now|
+    ((now-b4)/b4) asFloat oo] !
+        
+goodEject
+  ^#(1 2 3) eject: [:x | x > 1.5 ] !
+!
+
+"==================== 1b4 ===================="
 ! Object methods !
 visit: aBlock
 	aBlock value: self.
@@ -74,3 +88,33 @@ visit: aBlock
 visit: aBlock
   aBlock value: self.
 !!
+
+"==================== 1b5 ===================="
+! Object class methodsFor: 'tst' !
+testEverything
+Object allSubclasses visit: [:class|
+  class methodDictionary ifNotNil: [:dict|
+    MethodInfo dict oo
+  ]
+]
+  "Object allSubclasses do: [:class|
+    'hi' oo.
+    class methodDictionary do: [:method|
+      'hi' oo.
+      method oo.
+    ]
+  ]."
+!!
+
+
+
+
+
+"(Object withAllSubclasses collect: [ :cls |
+    cls methodDictionary ifNotNil: [ :dict |
+        dict values select: [ :method |
+            (method selector asLowercase indexOfSubCollection: 'convert' asLowercase) > 0 and: [
+            (method selector asLowercase indexOfSubCollection: 'string' asLowercase) > 0 ]
+        ]
+    ]
+]) join"
