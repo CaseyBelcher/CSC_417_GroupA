@@ -4,6 +4,9 @@
 (defun test1()
   (let ((x 0))
     (dolist (y '(1 2 3) x)
-      (setf x (+ x y)))))
+      (setf x (+ x y)) 
+    )
+  )
+)
 
   (print (test1))

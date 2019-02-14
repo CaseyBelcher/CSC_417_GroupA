@@ -5,6 +5,7 @@ of the following right. 1 mark for getting 10/10
 1. Write a file prolog1c.txt that answers the following questions.
 
 1a. In LISP what is an association list?
+  A list consisting of key value pairs. 
 
 1b. What does the function `assoc` do:
 
@@ -12,16 +13,34 @@ of the following right. 1 mark for getting 10/10
                   (r . x) (s . y) 
                   (r . z))) 
 
+   'assoc' is a way of looking up values in an association list using the key (first parameter) and the 
+   list itself (second parameter), and it will return the first key match found. In this case, 'assoc' 
+   returns (r . x) since that is the first key match for 'r. 
+  
 1c. What does the LISP 
 [mapcan](http://jtra.cz/stuff/lisp/sclr/mapcan.html)
 function do?  Gove am example of its use.
+  
+  mapcan applies a function (the first parameter) to each element of a list (the second parameter), 
+  and concatenates the results of each of these function calls into a new list which is returned. 
+  Example: (mapcan (lambda (x) (list(* 2 (+ x 1) ))) '(1 2 3)) => (4, 6, 8)
+ 
 
 1d. Give a small example of using LISP hash tables to (1) crete a
 hash table then (2) write something into that hash table then (3)
 read that value back.
 
+  (defparameter *mytable* (make-hash-table)) => create hash table 
+  (setf (gethash 'whiskers *mytable*) 'cat) => stores the hash of 'whiskers to 'cat 
+  (gethash 'whiskers *mytable*) => returns result of hashing 'whiskers  
+
 1e What does the LISP "sublis" function do? Give
 an example.
+  "sublis" takes an association list (first parameter) and a tree (second parameter) - which is really just 
+  another cons list - and returns a new tree which is the result of taking the original tree and replacing 
+  each of the atoms with their values in the association list if the atom is a key for that association list 
+  Example: (sublis '((t . turkey) ( b . beef ))
+                   '(list 't 'b )) => (LIST 'TURKEY 'BEEF)
 
 1f. In Prolog, what is the role of the bindings variable "binds".
 
