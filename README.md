@@ -15,3 +15,13 @@ Run:
 cd ./hwb
 ./oneb.st
 ```
+
+## Homework 1C 
+Part 1 answers located at: 
+```
+./hwc/prolog1c.txt
+```
+Run Parts 2-3: 
+```
+./hwc/prolog1c.lisp
+```
