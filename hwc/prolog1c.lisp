@@ -1,6 +1,6 @@
 #!/usr/bin/env clisp
 
-
+;  vim: set filetype=lisp tabstop=2 shiftwidth=2 expandtab :
 #|
 
 Help, my Prolog is broken. At the end of this file is a lisp
@@ -95,7 +95,7 @@ Part 3 is worth 1 mark
 
 3a. The code "(do (show ?c))" crashes. Fix it such that "(do (show
 ?c))" prints the current binding to ?c, followed be a new line.
-Hint: add an extra case into "prove".
+Hint: add an extra case into "prove". Done, he gave us do on accident.
 
 3b. The prove function is missing anything that handles numeric
 comparisons. So tests like (> ?c x) crashes. Please add code to
@@ -116,11 +116,28 @@ need to fix something inside `data0`.
 
 ;; Part 2a
 (defun known (x bindings)
-    (cond
-      ((assoc x bindings) (known (cdr (assoc x bindings)) bindings))
-      (t (list x))
-    )
+  (cond
+    ; If they are in the bindings, iterate and find the match
+    ((assoc x bindings) (known-iter x bindings))
+    ; They were not found in the list at all
+    (t ())
+  )
 )
+(defun known-iter (x bindings)
+  (cond
+    ; If x is in the cdr, iterate again
+    ((cdr (assoc x bindings)) (known-iter (cdr (assoc x bindings)) bindings))
+    ; x is not in the cdr, return x
+    (t x)
+  )
+)
+
+;(defun known (x bindings)
+;    (cond
+;      ((assoc x bindings) (known (cdr (assoc x bindings)) bindings))
+;      (t (list x))
+;    )
+;)
 
 #|
   (KNOWN '?X '((:?3044 . DEBBIE) (:?3045 . DONALD) (?Y . :?3044) (?X . :?3045)))
@@ -129,45 +146,37 @@ need to fix something inside `data0`.
 ==> DEBBIE
   (KNOWN '?X '((:?3066 . 1) (:?3063 . 1) (:?3065 . 1) (:?3064 . 1) (:?3061 . :?3064) (:?3062 . 1) (?X . :?3061)))
 ==> 1
+
+
+  (KNOWN '?XXX '((:?3066 . 1) (:?3063 . 1) (:?3065 . 1) (:?3061 . :?3064) (:?3062 . 1) (?X . :?3061)))
+==> nil, probably
 |#
 
-
 ;; Part 2b
-;; not working yet
-(defun has-help (lst)
-  (cond
-    ; if lst empty, just return
-    ((eq lst nil) ())
-    ; if lst isn't a list, make it one
-    ((not (listp lst)) (has-help (list lst)))
-    ; if (car lst) is a list, recurse on that and cons with result of recursing on (cdr lst)
-    ((listp (car lst)) ( cons (has-help (car lst)) (has-help (cdr lst)) ) )
-    ; if first char of (car lst) is '?', add car to output and recurse on (cdr lst)
-    ((eq #\? (char (string (car lst)) 0 )) (  cons (car lst) (has-help (cdr lst))  ))
-    ; continue to recurse on (cdr list)
-    ( t (has-help (cdr lst)) )
-  )
-)
-
-; turns lists of lists into one list with everything
-; example: ((1 2 3) 4) => (1 2 3 4)
-(defun flatten (lst)
-  (mapcan
-     #'(lambda (a)
-         (cond
-           ((atom a) (list a))
-           (T (flatten a))))
-     lst)
-)
 
 ; flattens and removes duplicates
 ; example: ((?X ?Y) (?X)) => (?X ?Y)
 (defun has-vars (lst)
-  (remove-duplicates (flatten (has-help lst)))
+  (cond
+    ((eq lst ()) ())
+    ((and (symbolp lst) (eq #\? (char (string lst) 0 ))) (list lst))
+    ((listp lst) (union (has-vars (car lst)) (has-vars (cdr lst))))
+    (t ())
+  )
 )
+
+(defun show (x) (print x))
+
+; Simple debug function so we can easily disable debug messages
+(defun d (msg)
+  ; Change t to nil to disable debug messages
+  (if t (print msg) nil)
+)
+
 #|
 (HAS-VARS '(AND (PARENT ?X ?Y) (MALE ?X)))
 |#
+
 
 
 (defvar *rules* (make-hash-table))
@@ -207,7 +216,9 @@ need to fix something inside `data0`.
         (male ?x)))
   (<- (sibling ?x ?y)
       (and (parent ?z ?x)
-           (parent ?z ?y))))
+           (parent ?z ?y)
+           (not (eq ?x ?y))
+           )))
 
 
 ;--------- --------- --------- --------- --------- --------- ---------
@@ -254,19 +265,31 @@ need to fix something inside `data0`.
 ;; does no occur check cause crash?
 ;--------- --------- --------- --------- --------- --------- ---------
 (defmacro query (question &body body)
+  (d "The body of query:")
+  (d body)
   (let ((binds (gensym)))
     `(dolist (,binds (prove ',question))
        (let ,(mapcar (lambda (v)
                          `(,v (known ',v ,binds)))
          (has-vars question))
-   ,@body))))
+   ,@body)))
+   ;(eval (car body))
+   ;(show (eval body))
+)
 
 (defun prove (expr &optional binds)
+  ;(d "Prooving:")
+  ;(d (car expr))
+  ;(d expr)
   (case (car expr)
     (and  (ands        (reverse (cdr expr))   binds))
     (or   (ors         (cdr  expr)            binds))
     (not  (negation    (cadr expr)            binds))
     (do   (evals       (cadr expr)            binds))
+    ;(<=   (evals       (#'<= expr)            binds))
+    ;(<    (evals       (#'<  expr)            binds))
+    ;(>=   (evals       (#'>= expr)            binds))
+    ;(>    (evals       (#'<  expr)            binds))
     (t    (prove1      (car  expr) (cdr expr) binds))))
 
 ;--------- --------- --------- --------- --------- --------- ---------
