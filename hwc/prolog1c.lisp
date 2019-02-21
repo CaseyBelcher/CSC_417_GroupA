@@ -24,7 +24,7 @@ Sadly, it is does not cause some things are broken. Please fix!
 First, some initial questions:
 
 11111111111111111111111111111111111111111111111111
-Part 1 is worth 1 mark. 0.5 marks for getting 7/10 
+Part 1 is worth 1 mark. 0.5 marks for getting 7/10
 of the following right. 1 mark for getting 10/10
 
 1. Write a file prolog1c.txt that answers the following questions.
@@ -33,11 +33,11 @@ of the following right. 1 mark for getting 10/10
 
 1b. What does the function `assoc` do:
 
-      (assoc 'r '((a . b) (c . d) 
-                  (r . x) (s . y) 
-                  (r . z))) 
+      (assoc 'r '((a . b) (c . d)
+                  (r . x) (s . y)
+                  (r . z)))
 
-1c. What does the LISP 
+1c. What does the LISP
 [mapcan](http://jtra.cz/stuff/lisp/sclr/mapcan.html)
 function do?  Gove am example of its use.
 
@@ -56,8 +56,8 @@ for `=`. So how does `(= ?x ?x)` work?
 
 1h. What does "(gensym "?")" do?
 1i. The following rules illustrates the need for variable renaming.
-Why is such renaming required? What could go wrong (with the 
-?x and ?y bindings) as our Prolog does inference over these two 
+Why is such renaming required? What could go wrong (with the
+?x and ?y bindings) as our Prolog does inference over these two
 rules.
      (<- (child ?x ?y) (parent ?y ?x))
      (<- (daughter ?y ?x) (and (child ?y ?x) (female ?y)))
@@ -72,13 +72,13 @@ be found in the car of any list then we set "a", to the cdr of that
 list.  Once that stops recursing, we return the binding "a".
 Otherwise, we return nil.  For example:
   (KNOWN '?X
-    '((#:?3044 . DEBBIE) (#:?3045 . DONALD) 
+    '((#:?3044 . DEBBIE) (#:?3045 . DONALD)
       (?Y . #:?3044) (?X . #:?3045))) ==> DONALD
   (KNOWN '?Y
-    '((#:?3044 . DEBBIE) (#:?3045 . DONALD) 
+    '((#:?3044 . DEBBIE) (#:?3045 . DONALD)
       (?Y . #:?3044) (?X . #:?3045))) ==> DEBBIE
   (KNOWN '?X
-     '((#:?3066 . 1) (#:?3063 . 1) (#:?3065 . 1) 
+     '((#:?3066 . 1) (#:?3063 . 1) (#:?3065 . 1)
        (#:?3064 . 1) (#:?3061 . #:?3064)
        (#:?3062 . 1) (?X . #:?3061))) ==> 1
 2b. Another missing function is "(has-vars lst)" that
@@ -115,42 +115,42 @@ need to fix something inside `data0`.
 
 
 ;; Part 2a
-(defun known (x bindings) 
-    (cond 
+(defun known (x bindings)
+    (cond
       ((assoc x bindings) (known (cdr (assoc x bindings)) bindings))
       (t (list x))
     )
 )
 
 #|
-  (KNOWN '?X '((:?3044 . DEBBIE) (:?3045 . DONALD) (?Y . :?3044) (?X . :?3045))) 
+  (KNOWN '?X '((:?3044 . DEBBIE) (:?3045 . DONALD) (?Y . :?3044) (?X . :?3045)))
 ==> DONALD
-  (KNOWN '?Y '((:?3044 . DEBBIE) (:?3045 . DONALD) (?Y . :?3044) (?X . :?3045))) 
+  (KNOWN '?Y '((:?3044 . DEBBIE) (:?3045 . DONALD) (?Y . :?3044) (?X . :?3045)))
 ==> DEBBIE
-  (KNOWN '?X '((:?3066 . 1) (:?3063 . 1) (:?3065 . 1) (:?3064 . 1) (:?3061 . :?3064) (:?3062 . 1) (?X . :?3061))) 
+  (KNOWN '?X '((:?3066 . 1) (:?3063 . 1) (:?3065 . 1) (:?3064 . 1) (:?3061 . :?3064) (:?3062 . 1) (?X . :?3061)))
 ==> 1
 |#
 
 
 ;; Part 2b
-;; not working yet 
+;; not working yet
 (defun has-help (lst)
   (cond
-    ; if lst empty, just return 
+    ; if lst empty, just return
     ((eq lst nil) ())
-    ; if lst isn't a list, make it one 
+    ; if lst isn't a list, make it one
     ((not (listp lst)) (has-help (list lst)))
     ; if (car lst) is a list, recurse on that and cons with result of recursing on (cdr lst)
     ((listp (car lst)) ( cons (has-help (car lst)) (has-help (cdr lst)) ) )
     ; if first char of (car lst) is '?', add car to output and recurse on (cdr lst)
     ((eq #\? (char (string (car lst)) 0 )) (  cons (car lst) (has-help (cdr lst))  ))
-    ; continue to recurse on (cdr list) 
+    ; continue to recurse on (cdr list)
     ( t (has-help (cdr lst)) )
   )
 )
 
-; turns lists of lists into one list with everything 
-; example: ((1 2 3) 4) => (1 2 3 4) 
+; turns lists of lists into one list with everything
+; example: ((1 2 3) 4) => (1 2 3 4)
 (defun flatten (lst)
   (mapcan
      #'(lambda (a)
@@ -161,12 +161,12 @@ need to fix something inside `data0`.
 )
 
 ; flattens and removes duplicates
-; example: ((?X ?Y) (?X)) => (?X ?Y)  
-(defun has-vars (lst) 
+; example: ((?X ?Y) (?X)) => (?X ?Y)
+(defun has-vars (lst)
   (remove-duplicates (flatten (has-help lst)))
 )
 #|
-(HAS-VARS '(AND (PARENT ?X ?Y) (MALE ?X))) 
+(HAS-VARS '(AND (PARENT ?X ?Y) (MALE ?X)))
 |#
 
 
@@ -201,11 +201,11 @@ need to fix something inside `data0`.
               (= ?b ?c)
               (not (> ?c 3))
               (= ?c 1)))
-  (<- (father ?x ?y) 
-      (and 
-        (parent ?x ?y) 
+  (<- (father ?x ?y)
+      (and
+        (parent ?x ?y)
         (male ?x)))
-  (<- (sibling ?x ?y) 
+  (<- (sibling ?x ?y)
       (and (parent ?z ?x)
            (parent ?z ?y))))
 
@@ -213,29 +213,29 @@ need to fix something inside `data0`.
 ;--------- --------- --------- --------- --------- --------- ---------
 (defun test1 ()
   (data0)
-  (query 
+  (query
     (father ?x ?y)
     (format t "~A is the father of ~A~%" ?x ?y))
-  (query 
+  (query
     (sibling ?x ?y)
     (format t "~A is the sibling of ~A.~%" ?x ?y))
-  (query 
+  (query
     (chain1 ?x 1)
     (format t "?x in chain1 matches to ~A.~%" ?x))
-  (query 
+  (query
     (chain2 ?x 1)
     (format t "?x in chain2 matches to ~A.~%" ?x))
-  (query 
+  (query
     (chain3 ?x 1)
     (format t "?x in chain3 matches to ~A.~%" ?x))
-  (query 
+  (query
     (chain4 ?x 1)
     (format t "?x in chain4 matches to ~A.~%" ?x))
 )
-    
+
 ;--------- --------- --------- --------- --------- --------- ---------
 (defun unify (x y &optional binds)
-  (cond 
+  (cond
     ((eql x y)        (values binds t))
     ((assoc x binds)  (unify (known x binds) y binds))
     ((assoc y binds)  (unify x (known y binds) binds))
@@ -243,12 +243,12 @@ need to fix something inside `data0`.
     ((var? y)         (values (cons (cons y x) binds) t))
     (t
       (when (and (consp x) (consp y))
-        (multiple-value-bind (b2 yes) 
+        (multiple-value-bind (b2 yes)
           (unify (car x) (car y) binds)
           (and yes (unify (cdr x) (cdr y) b2)))))))
 
 (defun var? (x)
-  (and (symbolp x) 
+  (and (symbolp x)
        (eql (char (symbol-name x) 0) #\?)))
 
 ;; does no occur check cause crash?
@@ -290,25 +290,25 @@ need to fix something inside `data0`.
     (let ((?a x) ; where x is computed from (known ?a binds)
           (?b y)); where y is computed from (known ?b binds)
       (print ?a ?b))"
-  (labels 
+  (labels
     ((local-vars ()
-        (mapcar 
-          (lambda (x) 
-                 `(,x ',(known x binds))) 
+        (mapcar
+          (lambda (x)
+                 `(,x ',(known x binds)))
              (has-vars expr))))
-    (eval `(let ,(local-vars) 
+    (eval `(let ,(local-vars)
               ,expr))
     (list binds)))
 
 (defun prove1 (pred args binds)
-  (mapcan 
+  (mapcan
     (lambda (r)
-        (multiple-value-bind (b2 yes) 
-          (unify args (car r) 
+        (multiple-value-bind (b2 yes)
+          (unify args (car r)
                  binds)
           (when yes
-            (if (cdr r)  
-              (prove (cdr r) b2) 
+            (if (cdr r)
+              (prove (cdr r) b2)
               (list b2)))))
     (mapcar #'renames
             (gethash pred *rules*))))
