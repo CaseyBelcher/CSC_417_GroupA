@@ -14,7 +14,6 @@ This should print out
       DONALD is the father of NANCY
       DEBBIE is the sibling of NANCY.
       NANCY is the sibling of DEBBIE.
-      [1]
       ?x in chain1 matches to 1.
       ?x in chain2 matches to 1.
       ?x in chain4 matches to 1.
@@ -170,7 +169,7 @@ need to fix something inside `data0`.
 ; Simple debug function so we can easily disable debug messages
 (defun d (msg)
   ; Change t to nil to disable debug messages
-  (if t (print msg) nil)
+  (if nil (print msg) nil)
 )
 
 #|
@@ -195,19 +194,26 @@ need to fix something inside `data0`.
   (<- (chain1 ?a ?b)
          (and (= ?a ?b)
               (= ?b ?c)
-              (do (show ?c))
+              ;(do (show ?c))
               (= ?c 1)))
   (<- (chain2 ?a ?b)
          (and (= ?a ?b)
               (= ?b ?c)
+              ;(do (show (>  ?c 0.3)))
               (>  ?c 0.3)))
   (<- (chain3 ?a ?b)
          (and (= ?a ?b)
               (= ?b ?c)
+              ;(do (show (= ?a ?b)))
+              ;(do (show (= ?b ?c)))
+              ;(do (show (and t t t nil)))
+              ;(do (show (> ?c 3)))
               (> ?c 3)))
   (<- (chain4 ?a ?b)
          (and (= ?a ?b)
               (= ?b ?c)
+              ;(do (show (not (> ?c 3))))
+              ;(do (show (= ?c 1)))
               (not (> ?c 3))
               (= ?c 1)))
   (<- (father ?x ?y)
@@ -217,7 +223,8 @@ need to fix something inside `data0`.
   (<- (sibling ?x ?y)
       (and (parent ?z ?x)
            (parent ?z ?y)
-           (not (eq ?x ?y))
+           (not (= ?x ?y))
+           ;(not '(eq (known ?x) (known ?y)))
            )))
 
 
@@ -265,35 +272,31 @@ need to fix something inside `data0`.
 ;; does no occur check cause crash?
 ;--------- --------- --------- --------- --------- --------- ---------
 (defmacro query (question &body body)
-  (d "The body of query:")
-  (d body)
   (let ((binds (gensym)))
     `(dolist (,binds (prove ',question))
        (let ,(mapcar (lambda (v)
                          `(,v (known ',v ,binds)))
          (has-vars question))
-   ,@body)))
-   ;(eval (car body))
-   ;(show (eval body))
-)
+   ,@body))))
 
 (defun prove (expr &optional binds)
-  ;(d "Prooving:")
-  ;(d (car expr))
-  ;(d expr)
   (case (car expr)
     (and  (ands        (reverse (cdr expr))   binds))
     (or   (ors         (cdr  expr)            binds))
     (not  (negation    (cadr expr)            binds))
     (do   (evals       (cadr expr)            binds))
-    ;(<=   (evals       (#'<= expr)            binds))
-    ;(<    (evals       (#'<  expr)            binds))
-    ;(>=   (evals       (#'>= expr)            binds))
-    ;(>    (evals       (#'<  expr)            binds))
+    (<    (ok       expr                   binds))
+    (>    (ok       expr                   binds))
+    (<=   (ok       expr                   binds))
+    (>=   (ok       expr                   binds))
     (t    (prove1      (car  expr) (cdr expr) binds))))
 
 ;--------- --------- --------- --------- --------- --------- ---------
 (defun ands (goals binds)
+; something to do with mapcan evaluting the lambda 
+; mapcan evalues teh lambda the linst, then 1 at a time push items into lambda
+; prove the car of goals only shows up after 
+; mapcans only works after the second ands is evaluted
   (if (null goals)
       (list binds)
       (mapcan (lambda (b)
@@ -305,10 +308,13 @@ need to fix something inside `data0`.
           goals))
 
 (defun negation (goal binds)
+  (d "Trying to negate this goal")
+  (d goal)
   (unless (prove goal binds)
     (list binds)))
 
 (defun evals (expr binds)
+  (d expr) 
   " turns e.g. (print (list ?a ?b)) into
     (let ((?a x) ; where x is computed from (known ?a binds)
           (?b y)); where y is computed from (known ?b binds)
@@ -322,6 +328,22 @@ need to fix something inside `data0`.
     (eval `(let ,(local-vars)
               ,expr))
     (list binds)))
+    
+(defun ok (expr binds)
+  (d expr) 
+  " turns e.g. (print (list ?a ?b)) into
+  (let ((?a x) ; where x is computed from (known ?a binds)
+        (?b y)); where y is computed from (known ?b binds)
+    (print ?a ?b))"
+  (labels
+    ((local-vars ()
+                 (mapcar
+                   (lambda (x)
+                     `(,x ',(known x binds)))
+                   (has-vars expr)
+                   (if (eval `(let ,(local-vars)
+                                ,expr))
+                     (list binds)))))))
 
 (defun prove1 (pred args binds)
   (mapcan
