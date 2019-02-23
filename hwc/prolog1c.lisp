@@ -169,7 +169,7 @@ need to fix something inside `data0`.
 ; Simple debug function so we can easily disable debug messages
 (defun d (msg)
   ; Change t to nil to disable debug messages
-  (if nil (print msg) nil)
+  (if () (print msg) nil)
 )
 
 #|
@@ -194,28 +194,39 @@ need to fix something inside `data0`.
   (<- (chain1 ?a ?b)
          (and (= ?a ?b)
               (= ?b ?c)
-              ;(do (show ?c))
               (= ?c 1)))
   (<- (chain2 ?a ?b)
-         (and (= ?a ?b)
-              (= ?b ?c)
+         (and 
+              (do (d "doing chain2"))
               ;(do (show (>  ?c 0.3)))
-              (>  ?c 0.3)))
-  (<- (chain3 ?a ?b)
-         (and (= ?a ?b)
+              ;(do (show (= ?a ?b)))
+              ;(do (show ?c))
+
+              (= ?a ?b)
               (= ?b ?c)
+              (> ?c 0.3)
+          ))
+  (<- (chain3 ?a ?b)
+         (and 
+              (do (d "doing chain3"))
               ;(do (show (= ?a ?b)))
               ;(do (show (= ?b ?c)))
               ;(do (show (and t t t nil)))
               ;(do (show (> ?c 3)))
-              (> ?c 3)))
-  (<- (chain4 ?a ?b)
-         (and (= ?a ?b)
+
+              (= ?a ?b)
               (= ?b ?c)
-              ;(do (show (not (> ?c 3))))
-              ;(do (show (= ?c 1)))
+              (> ?c 3)
+          ))
+  (<- (chain4 ?a ?b)
+         (and 
+              (do (d "doing chain4"))
+
+              (= ?a ?b)
+              (= ?b ?c)
               (not (> ?c 3))
-              (= ?c 1)))
+              (= ?c 1)
+          ))
   (<- (father ?x ?y)
       (and
         (parent ?x ?y)
@@ -280,23 +291,27 @@ need to fix something inside `data0`.
    ,@body))))
 
 (defun prove (expr &optional binds)
+  (d "Proving")
+  (d expr)
+  (d binds)
   (case (car expr)
     (and  (ands        (reverse (cdr expr))   binds))
     (or   (ors         (cdr  expr)            binds))
     (not  (negation    (cadr expr)            binds))
     (do   (evals       (cadr expr)            binds))
-    (<    (ok       expr                   binds))
-    (>    (ok       expr                   binds))
-    (<=   (ok       expr                   binds))
-    (>=   (ok       expr                   binds))
+    (<    (ok          expr                   binds))
+    (>    (ok          expr                   binds))
+    (<=   (ok          expr                   binds))
+    (>=   (ok          expr                   binds))
     (t    (prove1      (car  expr) (cdr expr) binds))))
 
 ;--------- --------- --------- --------- --------- --------- ---------
 (defun ands (goals binds)
-; something to do with mapcan evaluting the lambda 
-; mapcan evalues teh lambda the linst, then 1 at a time push items into lambda
-; prove the car of goals only shows up after 
-; mapcans only works after the second ands is evaluted
+  (d "Doing an ands with these goals:")
+  (d goals)
+  ; For each item in the list, mapcan will build the lambda, but not run it
+  ; mapcan only evaluates the lambda it creates after the second argument evaluates
+  ; So it goes "inside out" and hence must be reversed to do it in the right order
   (if (null goals)
       (list binds)
       (mapcan (lambda (b)
@@ -308,8 +323,6 @@ need to fix something inside `data0`.
           goals))
 
 (defun negation (goal binds)
-  (d "Trying to negate this goal")
-  (d goal)
   (unless (prove goal binds)
     (list binds)))
 
@@ -329,8 +342,10 @@ need to fix something inside `data0`.
               ,expr))
     (list binds)))
     
+; This ok is what we got from class
 (defun ok (expr binds)
-  (d expr) 
+  (d "Evaluating expression (ok)")
+  (d expr)
   " turns e.g. (print (list ?a ?b)) into
   (let ((?a x) ; where x is computed from (known ?a binds)
         (?b y)); where y is computed from (known ?b binds)

@@ -74,3 +74,5 @@ rules.
 1j. (HARD) The code for "prove" that handles conjunctions seem wrong.  Why
 does the "and" clause in "prove" use "reverse"? Write a comment in
 the "ands" function that explains why we needed that reverse.
+
+For each item in the list, mapcan will build the lambda, but not run it. mapcan only evaluates the lambda it creates after the second argument evaluates, so it goes "inside out" and hence must be reversed to do it in the right order.
