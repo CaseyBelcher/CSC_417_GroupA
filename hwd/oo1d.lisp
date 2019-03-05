@@ -171,17 +171,6 @@ TODO 1c. Implement "data-as-case":
       (INTEREST-RATE (LAMBDA NIL INTEREST-RATE))
     )
 
-    (
-      (NAME (LAMDA NIL NAME)) 
-      (
-        (BALANCE (LAMDA NIL BALANCE)) 
-        (
-          (INTEREST-RATE (LAMDA NIL INTEREST-RATE)) 
-          NIL
-        )
-      )
-    )
-
 |#
 
 (defun datas-as-case (fieldNames)
@@ -189,15 +178,12 @@ TODO 1c. Implement "data-as-case":
     ((eq fieldNames ()) ())
     (t 
       (union 
-        (list (car fieldNames) (list 'lamda 'nil (car fieldNames)))
+        (list (list (car fieldNames) (list 'lamda 'nil (car fieldNames))))
         (datas-as-case (cdr fieldNames))
       )
     )
   ) 
 )
-
-;; (defun data-helper ())
-
 
 
 #|
