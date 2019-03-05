@@ -1,3 +1,4 @@
+#!/usr/bin/env clisp
 ;  vim: set filetype=lisp tabstop=2 shiftwidth=2 expandtab :
 
 #|
@@ -154,14 +155,55 @@ and "datas-as-case" is missing... till you write it.
 1. Make defthing work
 
 TODO 1a. Why does mapcar call #'car over the "has"?
+  Because it is defining cases within the case statement using the field names 
+  of the passed parameters. So since "has" is a list of key/value pairs representing 
+  parameters, mapcar is going through each of these to get the key, which is the field name. 
+  
 TODO 1b. Why is message set to a gensym?
-TODO 1c. Implement "data-as-case": 
+  // 
 
-    (datas-as-case '(name balance interest-rate))
+TODO 1c. Implement "data-as-case": 
+(datas-as-case '(name balance interest-rate))
     ==>
-    ((NAME (LAMBDA NIL NAME)) 
-     (BALANCE (LAMBDA NIL BALANCE)) 
-     (INTEREST-RATE (LAMBDA NIL INTEREST-RATE)))
+    (
+      (NAME (LAMBDA NIL NAME)) 
+      (BALANCE (LAMBDA NIL BALANCE)) 
+      (INTEREST-RATE (LAMBDA NIL INTEREST-RATE))
+    )
+
+    (
+      (NAME (LAMDA NIL NAME)) 
+      (
+        (BALANCE (LAMDA NIL BALANCE)) 
+        (
+          (INTEREST-RATE (LAMDA NIL INTEREST-RATE)) 
+          NIL
+        )
+      )
+    )
+
+|#
+
+(defun datas-as-case (fieldNames)
+  (cond 
+    ((eq fieldNames ()) ())
+    (t 
+      (union 
+        (list (car fieldNames) (list 'lamda 'nil (car fieldNames)))
+        (datas-as-case (cdr fieldNames))
+      )
+    )
+  ) 
+)
+
+;; (defun data-helper ())
+
+
+
+#|
+
+
+    
     
 1d. Implement  "methods-as-case"
 
