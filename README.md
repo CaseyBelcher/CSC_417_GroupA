@@ -1,8 +1,7 @@
 # CSC_417_GroupA
+Austen Adler, Bryan Arrington, and Casey Belcher
 
 ## Homework 1A
-By Austen Adler, Bryan Arrington, and Casey Belcher
-
 Run:
 ```bash
 ./hwa/onea
@@ -24,4 +23,10 @@ Part 1 answers located at:
 Run Parts 2-3: 
 ```
 ./hwc/prolog1c.lisp
+```
+
+## Homework 1D
+Run: 
+```
+./hwd/oo1d.lisp
 ```
