@@ -160,9 +160,10 @@ TODO 1a. Why does mapcar call #'car over the "has"?
   parameters, mapcar is going through each of these to get the key, which is the field name. 
   
 TODO 1b. Why is message set to a gensym?
-  // 
+  This is a gensym so that there will be no clashes inside of the macro and so if lisp code is 
+  passed in as the message multiple excecutions will be avoided. For example, if a long running function is passed, it is only evaluated once at the top and stored as the gensym value instead of multiple values.
 
-TODO 1c. Implement "data-as-case": 
+TODO 1c. Implement "datas-as-case": 
 (datas-as-case '(name balance interest-rate))
     ==>
     (
@@ -178,7 +179,7 @@ TODO 1c. Implement "data-as-case":
     ((eq fieldNames ()) ())
     (t 
       (union 
-        (list (list (car fieldNames) (list 'lamda 'nil (car fieldNames))))
+        (list (list (car fieldNames) (list 'lambda 'nil (car fieldNames))))
         (datas-as-case (cdr fieldNames))
       )
     )
@@ -198,13 +199,20 @@ TODO 1c. Implement "data-as-case":
      ((MORE (LAMBDA (X) (+ X 1))) 
       (LESS (LAMBDA (X) (- X 1))))
      
+|#
+(defun methods-as-case (does)
+  (mapcar (lambda (name)
+             `(,(car name) (lambda ,(cadr name) ,(caddr name))))
+     does))
+#|
+
 
 Now that that is working, the following should
 expand nicely:
 |#
 
 ; but first, uncomment this code
-'(defthing
+(defthing
   account
   :has  ((name) (balance 0) (interest-rate .05))
   :does ((withdraw (amt)
@@ -242,16 +250,34 @@ TODO 1f.. Show the output from the following function
 
 
 ; to run encapuatlion, uncomment the following
-'(encapsulation)
+(encapsulation)
 
 #|
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; POLYMORPHISM
 
-TODO 2a. Define an object "cirle" with variables x,y
+2a. Define an object "cirle" with variables x,y
     (for  the center of the circle) and radius 
     (to hold the size of the circle). Add a method 
-    "area" that returns 2 *pi*radius^2
+    "area" that returns pi*radius^2
+
+|# 
+
+(defthing
+  circle
+  :has  ((x) (y) (radius))
+  :does (
+         (area ()
+          (* pi radius radius))
+  )
+
+)
+
+; run this to peek inside circle
+'(xpand (circle))
+
+#|
+
 
 ; run this to peek inside circle
 '(xpand (circle))
@@ -259,6 +285,21 @@ TODO 2a. Define an object "cirle" with variables x,y
 TODO 2b. Define an object "rectangle" with variables x1,x2,y1,y2
     that all default value of 0. Add
     a method "area" that returns the area of that rectangle
+    
+|# 
+
+(defthing
+  rectangle
+  :has  ((x1 0) (x2 0) (y1 0) (y2 0))
+  :does (
+         (area ()
+          (* (- x2 x1) (- y2 y1)) ) 
+           
+  )
+)
+
+#|
+    
 TODO 2c. Show the output from the following test
 
 |#
@@ -273,7 +314,9 @@ TODO 2c. Show the output from the following test
     (print `(polymorphism ,sum))))
 
 ; to run, uncomment the following
-'(polymorphism)
+'(print "polymorphism")
+(polymorphism)
+; '(polymorphism)
 
 #|
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -293,7 +336,7 @@ structs.
 (defstruct about has does )
 
 #|
-Also, yu'll need to write a new definition of the "defthing" macro
+Also, you'll need to write a new definition of the "defthing" macro
 which we call "defklass". As a side-effect of creating the lambda,
 it also sends that object a pointer to itself (see "_self!") as
 well as telling the object what kind of thing it is (see "_ako!").
@@ -339,18 +382,46 @@ object
 |#
 
 ; implement defklass here
+(defmacro defklass (klass &key has does isa)
+  (let* ((message (gensym "MESSAGE")) 
+         (b4          (and isa (gethash isa *meta*)))
+         (has-before  (and b4 (about-has b4)))
+         (does-before (and b4 (about-does b4)))
+         )
+    (setf has (append has has-before))
+    (setf does (append does does-before))
+    ;; save the new concatenated definitions so klass can use them
+    (setf (gethash klass *meta*) (make-about :has has :does does))
+    `(defun ,klass (&key ,@has) 
+       (let ((self
+               (lambda (,message)
+                 (case ,message
+                   ;,@(methods-as-case has-before)
+                   ;,@(datas-as-case (mapcar #'car does-before))
+                   ,@(methods-as-case does)
+                   ,@(datas-as-case (mapcar #'car has))
+                   )
+                 )))
+                 (send self '_self! self)
+                 (send self '_isa! ',klass)
+                 self
+         )
+       )
+    )
+  )
+
 
 (let ((_counter 0))
   (defun counter () (incf _counter)))
 
 (defun meta? (x)
-  (and (symbolp x) 
+  (and (symbolp x)
        (eql (char (symbol-name x) 0) #\_)))
 
 ; uncomment the following when defklass is implemented
-
-'(defklass 
-  object 
+'(print "Uncommenting defklass tests")
+(defklass
+  object
   :has ((_self)  (_isa) (id (counter)))
   :does (
          (_isa!  (x) (setf _isa  x))
@@ -362,9 +433,8 @@ object
                         (if (not (meta? one))
                           (push `(,one . ,(send _self one)) 
                                 slot-values)))))))
-
 ; uncomment the following when defklass is implemented
-'(defklass
+(defklass
   account
   :isa object
   :has  ((name) (balance 0) (interest-rate .05))
@@ -380,13 +450,17 @@ object
 '(xpand (account))
 
 ; uncomment the following when defklass is implemented
-'(defklass
+'(print "kjse")
+(defklass
   trimmed-account
   :isa account
   :does ((withdraw (amt)
                    (if (<= amt balance)
                      (decf balance amt)
                      'insufficient-funds))))
+
+'(xpand (trimmed-account))
+
 (defun inheritance ()
   (let ((acc (trimmed-account)))
     (print `(inheritance ,(send acc 'deposit 100)
@@ -399,8 +473,7 @@ object
       ))
 
 ; TODO: 3a show that the following works correctly
-
-'(inheritance)
+(inheritance)
 
 '(xpand (trimmed-account))
 ; TODO: 3b. show that the following prints out the slots of an object.
@@ -410,4 +483,4 @@ object
       (print `(meta ,(send acc 'show))
    )))
 
-'(meta)
+(meta)
