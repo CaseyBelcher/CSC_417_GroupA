@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+#### begin config
+What=${What:-Duo101}
+Who=${Who:-Tim Menzies}
+When=${When:-2018}
+Repo=${Repo:-d-u-o/101}
+Lua=$(which luajit)
+#### end config
+
+##############################################
+trap cleanup  0 1 2 3 6
+
+Tmp=${Tmp:-/tmp/$USER/ide/$$.$RANDOM}
+Ide=${Ide:-$(dirname $PWD)}
+Bin=${Bin:-"$Tmp"/bin}
+Etc=${Etc:-"$Ide"/etc}
+Src=${Src:-"$Ide"/src}
+Doc=${Doc:-"$Ide"/docs}
+Test=${Test:-"$Ide"/test}
+
+bashrc()    { cat "$Etc"/dotbashrc;    }
+citation()  { . "$Etc"/citation.sh;    }
+cleanup()   { rm -rf  "$Tmp";          }
+conduct()   { cat "$Etc"/conduct.md;   }
+contrib()   { cat "$Etc"/contrib.md;   }
+exe()       { chmod +x "$Etc"/*.sh;    }
+exists()    { exists0 "$1" $2; git add "$1"; }
+exists0()   { if [ ! -f "$1" ]; then $2 > "$1"; fi; }
+gitignore() { cat "$Etc"/dotgitignore; }
+license()   { . "$Etc"/license.sh;     }
+makedirs()  { mkdir -p "$Src" "$Tmp" "$Bin" "$Etc" "$Test" "$Doc"; 
+	      echo .nojekyll > "$Doc"/.nojekyll 
+	      git add "$Doc"/.nojekyll
+            }
+requires()  { cat "$Etc"/requires.txt; }
+vimrc()     { . "$Etc"/dotvimrc.sh;    }
+
+for i in pycco lua5.3 luajit; do
+	if [ ! `which $i` ]; then
+		echo "Aborting. $i is missing."
+		exit 1
+	fi
+done
+
+
+makedirs
+exe
+exists  "$Ide"/.gitignore          gitignore
+exists  "$Ide"/requirements.txt    requires
+exists  "$Ide"/CITATION.md         citation
+exists  "$Ide"/LICENSE.md          license
+exists  "$Ide"/CODE_OF_CONDUCT.md  conduct
+exists  "$Ide"/CONTRIBUTING.md     contrib
+exists0 "$Tmp"/.vimrc              vimrc
+exists0 "$Tmp"/.bashrc             bashrc
+
+
+Bin="$Bin" Here="$Here" What="$What" Lua="$Lua" \
+Who="$Who" When="$When" Repo="$Repo" Doc="$Doc" \
+Ide="$Ide" Tmp="$Tmp"   Etc="$Etc"   Test="$Test" \
+Src="$Src" \
+bash --init-file "$Tmp"/.bashrc -i

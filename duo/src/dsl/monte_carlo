@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+import sys
+import csv
+import argparse
+from random import seed, uniform
+from pdb import set_trace
+
+
+class MonteCarlo:
+    def __init__(self):
+        self.attr = {
+            "pomposity": {
+                "min": 0,
+                "max": 100
+            },
+            "learning_curve": {
+                "min": 1,
+                "max": 100
+            },
+            "optimism": {
+                "min": 0.1,
+                "max": 100
+            },
+            "atleast": {
+                "min": 0,
+                "max": 10
+            },
+            "done_percent": {
+                "min": 0,
+                "max": 10
+            },
+            "productivity_new": {
+                "min": 0,
+                "max": 1
+            },
+            "productivity_exp": {
+                "min": 1,
+                "max": 10
+            },
+            "d": {
+                "min": 0,
+                "max": 1
+            },
+            "ep": {
+                "min": 1,
+                "max": 10
+            },
+            "nprod": {
+                "min": 0.1,
+                "max": 10
+            },
+            "np": {
+                "min": 1,
+                "max": 30
+            },
+            "ts": {
+                "min": 1,
+                "max": 100
+            },
+            "to": {
+                "min": 1,
+                "max": 100
+            },
+            "r": {
+                "min": 1,
+                "max": 1000
+            }
+        }
+
+    def generator(self, iters=1, verbose=False):
+        for i in range(int(iters)):
+            row = {key: round(uniform(item["min"], item["max"]), 2)
+                   for key, item in self.attr.items()}
+            row['verbose'] = verbose
+            print(row)
+
+
+def monte_carlo_main(iters, seed_val, verbose_flag):
+    mc = MonteCarlo()
+    seed(seed_val)
+    mc.generator(iters, verbose_flag)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Monte Carlo generator.')
+    parser.add_argument('-n', '--num-repeats', metavar='rep',
+                        type=int, default=1, help='Number of repeats')
+    parser.add_argument('-s', '--seed', metavar='seed',
+                        type=int, default=1, help='Random number seed')
+    parser.add_argument('-v', '--verbose', metavar='verbose',
+                        type=bool, default=False, help='Verbose mode')
+    args = parser.parse_args()
+    monte_carlo_main(iters=args.num_repeats,
+                     seed_val=args.seed, verbose_flag=args.verbose)

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>sym.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>sym.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro </p>
+<hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h2>Example</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <pre><code> s=syms{ 'y','y','y','y','y','y','y','y','y',
+         'n','n','n','n','n'}
+ print(symEnt(s)) ==&gt; 0.9402
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Inside a <code>sym</code>:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">sym</span><span class="p">()</span>
+  <span class="kr">return</span> <span class="p">{</span><span class="n">counts</span><span class="o">=</span><span class="p">{},</span><span class="n">mode</span><span class="o">=</span><span class="kc">nil</span><span class="p">,</span><span class="n">most</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">_ent</span><span class="o">=</span><span class="kc">nil</span><span class="p">}</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Add <code>x</code> to a <code>sym</code>:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">symInc</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">x</span><span class="p">,</span>   <span class="n">new</span><span class="p">,</span><span class="n">old</span><span class="p">)</span>
+  <span class="kr">if</span> <span class="n">x</span><span class="o">==</span><span class="s2">&quot;?&quot;</span> <span class="kr">then</span> <span class="kr">return</span> <span class="n">x</span> <span class="kr">end</span>
+  <span class="n">t</span><span class="p">.</span><span class="n">_ent</span><span class="o">=</span> <span class="kc">nil</span>
+  <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="n">old</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">counts</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+  <span class="n">new</span> <span class="o">=</span> <span class="n">old</span> <span class="ow">and</span> <span class="n">old</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">or</span> <span class="mi">1</span>
+  <span class="n">t</span><span class="p">.</span><span class="n">counts</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span>
+  <span class="kr">if</span> <span class="n">new</span> <span class="o">&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">most</span> <span class="kr">then</span>
+    <span class="n">t</span><span class="p">.</span><span class="n">most</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">new</span><span class="p">,</span> <span class="n">x</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">x</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Remove <code>x</code> from a <code>sym</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">symDec</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+  <span class="n">t</span><span class="p">.</span><span class="n">_ent</span><span class="o">=</span> <span class="kc">nil</span>
+  <span class="kr">if</span> <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="kr">then</span>
+    <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">t</span><span class="p">.</span><span class="n">counts</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">counts</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">x</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Buld add to a <code>sym</code>:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">syms</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">f</span><span class="p">,</span>       <span class="n">s</span><span class="p">)</span>
+  <span class="n">f</span><span class="o">=</span><span class="n">f</span> <span class="ow">or</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span> <span class="kr">end</span>
+  <span class="n">s</span><span class="o">=</span><span class="n">sym</span><span class="p">()</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">x</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="kr">do</span> <span class="n">symInc</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">s</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Computing the entropy: don&rsquo;t recompute if you&rsquo;ve
+already done it before.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">symEnt</span><span class="p">(</span><span class="n">t</span><span class="p">,</span>  <span class="n">p</span><span class="p">)</span>
+  <span class="kr">if</span> <span class="ow">not</span> <span class="n">t</span><span class="p">.</span><span class="n">_ent</span> <span class="kr">then</span>
+    <span class="n">t</span><span class="p">.</span><span class="n">_ent</span><span class="o">=</span><span class="mi">0</span>
+    <span class="kr">for</span> <span class="n">x</span><span class="p">,</span><span class="n">n</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">counts</span><span class="p">)</span> <span class="kr">do</span>
+      <span class="n">p</span>      <span class="o">=</span> <span class="n">n</span><span class="o">/</span><span class="n">t</span><span class="p">.</span><span class="n">n</span>
+      <span class="n">t</span><span class="p">.</span><span class="n">_ent</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">_ent</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="nb">math.log</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">t</span><span class="p">.</span><span class="n">_ent</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">symXpect</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span>   <span class="n">n</span><span class="p">)</span>  
+  <span class="n">n</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">j</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span><span class="mf">0.0001</span>
+  <span class="kr">return</span> <span class="n">i</span><span class="p">.</span><span class="n">n</span><span class="o">/</span><span class="n">n</span> <span class="o">*</span> <span class="n">symEnt</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">j</span><span class="p">.</span><span class="n">n</span><span class="o">/</span><span class="n">n</span> <span class="o">*</span> <span class="n">symEnt</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+<span class="kr">end</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

@@ -1,0 +1,14 @@
+#!/usr/bin/env lua
+-- vim: ft=lua ts=2 sw=2 sts=2 et:cindent:formatoptions+=cro
+--------- --------- --------- --------- --------- --------- 
+
+do 
+  local root = '..'
+  local seen = {}
+  function use(f)
+    if not seen[f] then 
+      seen[f] = true
+      dofile(root .. '/' .. f)
+      io.stderr:write('-- ' .. f .. '\n')
+  end end 
+end

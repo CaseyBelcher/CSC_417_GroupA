@@ -1,0 +1,3 @@
+lua>=5.2
+luajit>=5.2
+pycoo>=0.6

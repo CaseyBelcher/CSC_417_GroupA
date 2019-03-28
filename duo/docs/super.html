@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>super.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>super.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro   </p>
+<hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;lib&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;num&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;sym&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;rows&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>This code rewrites the contents of
+the numeric independent variables as ranges (e.g. 23:45).
+Such columns <code>c</code> are sorted then explored for a <code>cut</code> where
+the expected value of the variance after cutting is 
+minimized. Note that this code endorses a cut only if:</p>
+<ul>
+<li><em>Both</em> the expected value of
+  the standard deviation of <code>c</code> and the goal column
+  <code>goal</code> are  minimized</li>
+<li>The minimization is create than some trivially
+  small change (defaults to 5%, see <code>Lean.super.margin</code>);</li>
+<li>The number of items in each cut is greater than 
+  some magic constant <code>enough</code> (which defaults to
+  the square root of the number of rows, see
+  <code>Lean.super.enough</code>)</li>
+</ul>
+<p>After finding a cut, this code explores both 
+sides of the cut for recursive cuts.</p>
+<p>Important note: this code <strong>rewrites</strong> the table
+so the only thing to do when it terminates is
+dump the new table and quit.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">super</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">goal</span><span class="p">,</span><span class="n">enough</span><span class="p">,</span>       <span class="n">rows</span><span class="p">,</span><span class="n">most</span><span class="p">,</span><span class="n">cohen</span><span class="p">)</span>
+  <span class="n">rows</span>   <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">rows</span>
+  <span class="n">goal</span>   <span class="o">=</span> <span class="n">goal</span> <span class="ow">or</span> <span class="o">#</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+  <span class="n">enough</span> <span class="o">=</span> <span class="n">enough</span> <span class="ow">or</span> <span class="p">(</span><span class="o">#</span><span class="n">rows</span><span class="p">)</span><span class="o">^</span><span class="n">Lean</span><span class="p">.</span><span class="n">super</span><span class="p">.</span><span class="n">enough</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <hr />
+<p>This generates a print string for a band
+that streches from <code>lo</code> to <code>hi</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">band</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="n">lo</span><span class="o">==</span><span class="mi">1</span> <span class="kr">then</span>
+      <span class="kr">return</span> <span class="s2">&quot;..&quot;</span><span class="o">..</span> <span class="n">rows</span><span class="p">[</span><span class="n">hi</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+    <span class="kr">elseif</span> <span class="n">hi</span> <span class="o">==</span> <span class="n">most</span> <span class="kr">then</span>
+      <span class="kr">return</span> <span class="n">rows</span><span class="p">[</span><span class="n">lo</span><span class="p">][</span><span class="n">c</span><span class="p">]</span><span class="o">..</span><span class="s2">&quot;..&quot;</span>
+    <span class="kr">else</span>
+      <span class="kr">return</span> <span class="n">rows</span><span class="p">[</span><span class="n">lo</span><span class="p">][</span><span class="n">c</span><span class="p">]</span><span class="o">..</span><span class="s2">&quot;..&quot;</span><span class="o">..</span><span class="n">rows</span><span class="p">[</span><span class="n">hi</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="kr">end</span>
+  <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Find one best cut, as follows.</p>
+<ul>
+<li>First all everything to a <em>right</em> counter
+  (abbreviated here as <code>r</code>).</li>
+<li>Then work from <code>lo</code> to <code>hi</code> taking away
+  values from the <em>right</em> and adding them
+  to a <em>left</em> counter (abbreviated here as <code>l</code>).</li>
+<li>Using the information in these <em>right</em> and
+  <em>left</em> counters, work out where the best <code>cut</code> is.</li>
+<li>If no such <code>cut</code> found, return <code>nil</code>.</li>
+</ul>
+<p>Tehcnical note: actually, we run two <em>right</em>
+and two <em>left</em> counters:</p>
+<ul>
+<li>two for the independent column (<code>xl</code> and <code>xr</code>)</li>
+<li>and two for the goal column  (<code>yl</code> and <code>yr</code>)</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">argmin</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span> <span class="n">cohen</span><span class="p">,</span>    
+                          <span class="n">x</span><span class="p">,</span><span class="n">nl</span><span class="p">,</span><span class="n">nr</span><span class="p">,</span><span class="n">bestx</span><span class="p">,</span><span class="n">tmpx</span><span class="p">,</span>
+                          <span class="n">y</span><span class="p">,</span><span class="n">sl</span><span class="p">,</span><span class="n">sr</span><span class="p">,</span>
+                          <span class="n">cut</span><span class="p">)</span> 
+    <span class="n">nl</span><span class="p">,</span><span class="n">nr</span> <span class="o">=</span> <span class="n">num</span><span class="p">(),</span> <span class="n">num</span><span class="p">()</span>
+    <span class="n">sl</span><span class="p">,</span><span class="n">sr</span> <span class="o">=</span> <span class="n">sym</span><span class="p">(),</span> <span class="n">sym</span><span class="p">()</span>
+    <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span> <span class="kr">do</span> 
+      <span class="n">numInc</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">])</span> 
+      <span class="n">symInc</span><span class="p">(</span><span class="n">sr</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">goal</span><span class="p">])</span> <span class="kr">end</span>
+    <span class="n">bestx</span> <span class="o">=</span> <span class="n">symEnt</span><span class="p">(</span><span class="n">sr</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="p">(</span><span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">*</span><span class="n">enough</span><span class="p">)</span> <span class="kr">then</span>
+      <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span> <span class="kr">do</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">goal</span><span class="p">]</span>
+        <span class="n">numInc</span><span class="p">(</span><span class="n">nl</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span> <span class="n">numDec</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> 
+        <span class="n">symInc</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span> <span class="n">symDec</span><span class="p">(</span><span class="n">sr</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> 
+        <span class="kr">if</span> <span class="n">nl</span><span class="p">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">enough</span> <span class="ow">and</span> <span class="n">nr</span><span class="p">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">enough</span> <span class="kr">then</span>
+          <span class="kr">if</span> <span class="n">nl</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">nl</span><span class="p">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">cohen</span> <span class="kr">then</span>
+            <span class="kr">if</span> <span class="n">nr</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">nr</span><span class="p">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">cohen</span> <span class="kr">then</span>
+              <span class="n">tmpx</span> <span class="o">=</span> <span class="n">symXpect</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span><span class="n">sr</span><span class="p">)</span> <span class="o">*</span> <span class="n">Lean</span><span class="p">.</span><span class="n">super</span><span class="p">.</span><span class="n">margin</span>
+              <span class="kr">if</span> <span class="n">tmpx</span> <span class="o">&lt;</span> <span class="n">bestx</span> <span class="kr">then</span>
+                <span class="n">cut</span><span class="p">,</span><span class="n">bestx</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">tmpx</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> 
+    <span class="kr">return</span> <span class="n">cut</span>
+  <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>If we can find one good cut:</p>
+<ul>
+<li>Then recurse to, maybe, find other cuts. </li>
+<li>Else, rewrite all values in <code>lo</code> to <code>hi</code> to
+  the same string <code>s</code> representing the range..</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">cuts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span><span class="n">pre</span><span class="p">,</span><span class="n">cohen</span><span class="p">,</span>       <span class="n">cut</span><span class="p">,</span><span class="n">txt</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="n">pre</span><span class="o">..</span><span class="n">rows</span><span class="p">[</span><span class="n">lo</span><span class="p">][</span><span class="n">c</span><span class="p">]</span><span class="o">..</span><span class="s2">&quot;..&quot;</span><span class="o">..</span><span class="n">rows</span><span class="p">[</span><span class="n">hi</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+    <span class="n">cut</span><span class="p">,</span><span class="n">mu</span> <span class="o">=</span> <span class="n">argmin</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span><span class="n">cohen</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="n">cut</span> <span class="kr">then</span>
+      <span class="n">fyi</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+      <span class="n">cuts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span>   <span class="n">cut</span><span class="p">,</span> <span class="n">pre</span><span class="o">..</span><span class="s2">&quot;|.. &quot;</span><span class="p">,</span><span class="n">cohen</span><span class="p">)</span>
+      <span class="n">cuts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">cut</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">pre</span><span class="o">..</span><span class="s2">&quot;|.. &quot;</span><span class="p">,</span><span class="n">cohen</span><span class="p">)</span>
+    <span class="kr">else</span>
+      <span class="n">s</span> <span class="o">=</span> <span class="n">band</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
+      <span class="n">fyi</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+      <span class="kr">for</span> <span class="n">r</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span> <span class="kr">do</span>
+        <span class="n">rows</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="n">s</span> <span class="kr">end</span> <span class="kr">end</span>
+  <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Our data sorts such that all the &ldquo;?&rdquo; unknown values
+are pushed to the end. This function tells us
+where to stop so we don&rsquo;t run into those values.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="kr">function</span> <span class="nf">stop</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+    <span class="kr">for</span> <span class="n">i</span><span class="o">=#</span><span class="n">t</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span> <span class="kr">do</span> <span class="kr">if</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">~=</span> <span class="s2">&quot;?&quot;</span> <span class="kr">then</span> <span class="kr">return</span> <span class="n">i</span> <span class="kr">end</span> <span class="kr">end</span>
+    <span class="kr">return</span> <span class="mi">0</span>
+  <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>For all numeric indpendent columns, sort it and 
+try to cut it. Then <code>dump</code> the results to standard output.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">c</span>  <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">indeps</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="kr">if</span> <span class="n">data</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="kr">then</span>
+      <span class="n">ksort</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span> <span class="c1">-- sorts the rows on column `c`.</span>
+      <span class="n">most</span> <span class="o">=</span> <span class="n">stop</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+      <span class="kd">local</span> <span class="n">all</span> <span class="o">=</span> <span class="n">num</span><span class="p">()</span>
+      <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">data</span><span class="p">.</span><span class="n">rows</span>  <span class="kr">do</span> <span class="n">numInc</span><span class="p">(</span><span class="n">all</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">])</span> <span class="kr">end</span>
+      <span class="n">fyi</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">-- &quot;</span><span class="o">..</span> <span class="n">data</span><span class="p">.</span><span class="n">name</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">..</span> <span class="s2">&quot; ----------&quot;</span><span class="p">)</span>
+      <span class="n">cuts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">most</span><span class="p">,</span><span class="s2">&quot;|.. &quot;</span><span class="p">,</span><span class="n">all</span><span class="p">.</span><span class="n">sd</span><span class="o">*</span><span class="n">Lean</span><span class="p">.</span><span class="n">super</span><span class="p">.</span><span class="n">cohen</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">gsub</span><span class="p">(</span> <span class="n">cat</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="s2">&quot;, &quot;</span><span class="p">),</span> 
+              <span class="s2">&quot;%$&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="c1">-- dump dollars since no more nums</span>
+  <span class="n">dump</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Main function, if this is called top-level.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">return</span> <span class="p">{</span><span class="n">main</span><span class="o">=</span><span class="kr">function</span><span class="p">()</span> <span class="kr">return</span> <span class="n">super</span><span class="p">(</span><span class="n">rows</span><span class="p">())</span> <span class="kr">end</span><span class="p">}</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

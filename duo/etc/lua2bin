@@ -1,0 +1,16 @@
+ready() { 
+	cat <<-EOF
+	#!$Lua
+	package.path = package.path .. ';$Src/?.lua' 
+	require('lib')
+	main(require('$1'))
+	EOF
+}
+cd $Src
+for f in *.lua; do
+	stem=$(basename $f .lua)
+	g=$Bin/$stem
+	ready $stem > $g
+	chmod +x $g
+done
+

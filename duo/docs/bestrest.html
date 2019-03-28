@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>bestrest.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>bestrest.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro 
+------- --------- --------- --------- --------- ---------~</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;lib&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;num&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;rows&quot;</span>
+
+<span class="kr">function</span> <span class="nf">label</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>  <span class="n">enough</span><span class="p">,</span><span class="n">rows</span><span class="p">,</span> <span class="n">most</span><span class="p">,</span><span class="n">cohen</span><span class="p">)</span>
+  <span class="n">rows</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">rows</span>
+  <span class="n">enough</span> <span class="o">=</span> <span class="p">(</span><span class="o">#</span><span class="n">rows</span><span class="p">)</span><span class="o">^</span><span class="n">Lean</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">enough</span> 
+
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">band</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="n">lo</span><span class="o">==</span><span class="mi">1</span> <span class="kr">then</span>
+      <span class="kr">return</span> <span class="s2">&quot;..&quot;</span><span class="o">..</span> <span class="n">rows</span><span class="p">[</span><span class="n">hi</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+    <span class="kr">elseif</span> <span class="n">hi</span> <span class="o">==</span> <span class="n">most</span> <span class="kr">then</span>
+      <span class="kr">return</span> <span class="n">rows</span><span class="p">[</span><span class="n">lo</span><span class="p">][</span><span class="n">c</span><span class="p">]</span><span class="o">..</span><span class="s2">&quot;..&quot;</span>
+    <span class="kr">else</span>
+      <span class="kr">return</span> <span class="n">rows</span><span class="p">[</span><span class="n">lo</span><span class="p">][</span><span class="n">c</span><span class="p">]</span><span class="o">..</span><span class="s2">&quot;..&quot;</span><span class="o">..</span><span class="n">rows</span><span class="p">[</span><span class="n">hi</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="kr">end</span>
+  <span class="kr">end</span>
+
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">argmin</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span>     <span class="n">l</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">cut</span><span class="p">,</span><span class="n">best</span> <span class="p">,</span><span class="n">tmp</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="p">(</span><span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">*</span><span class="n">enough</span><span class="p">)</span> <span class="kr">then</span>
+      <span class="n">l</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="n">num</span><span class="p">(),</span> <span class="n">num</span><span class="p">()</span>
+      <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span> <span class="kr">do</span> <span class="n">numInc</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">])</span> <span class="kr">end</span>
+      <span class="n">best</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">sd</span>
+      <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span> <span class="kr">do</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+        <span class="n">numInc</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">numDec</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="kr">if</span> <span class="n">l</span><span class="p">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">enough</span> <span class="ow">and</span> <span class="n">r</span><span class="p">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">enough</span> <span class="kr">then</span>
+          <span class="kr">if</span> <span class="n">l</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">l</span><span class="p">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">cohen</span> <span class="kr">then</span>
+            <span class="kr">if</span> <span class="n">r</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">r</span><span class="p">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">cohen</span> <span class="kr">then</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">numXpect</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">r</span><span class="p">)</span> <span class="o">*</span> <span class="n">Lean</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">margin</span>
+            <span class="kr">if</span> <span class="n">tmp</span> <span class="o">&lt;</span> <span class="n">best</span> <span class="kr">then</span>
+               <span class="n">cut</span><span class="p">,</span><span class="n">best</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">tmp</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> 
+    <span class="kr">return</span> <span class="n">cut</span>
+  <span class="kr">end</span>
+
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">mark</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span>   <span class="n">b</span><span class="p">)</span>
+    <span class="n">b</span><span class="o">=</span> <span class="n">band</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
+    <span class="kr">for</span> <span class="n">r</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span> <span class="kr">do</span> <span class="n">rows</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">b</span> <span class="kr">end</span> 
+  <span class="kr">end</span>
+
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">cuts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span><span class="n">pre</span><span class="p">,</span>       <span class="n">cut</span><span class="p">,</span><span class="n">txt</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">fyi</span><span class="p">(</span><span class="n">pre</span> <span class="o">..</span> <span class="n">rows</span><span class="p">[</span><span class="n">lo</span><span class="p">][</span><span class="n">c</span><span class="p">])</span>
+    <span class="kr">if</span> <span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="n">enough</span> <span class="kr">then</span>
+      <span class="n">cut</span> <span class="o">=</span> <span class="n">argmin</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span><span class="n">cohen</span><span class="p">)</span>
+      <span class="kr">if</span> <span class="n">cut</span> <span class="kr">then</span>
+        <span class="kr">return</span> <span class="n">cuts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">cut</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span> <span class="n">pre</span><span class="o">..</span><span class="s2">&quot;|..&quot;</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
+    <span class="n">mark</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">lo</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mark</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
+  <span class="kr">end</span>
+
+  <span class="kd">local</span> <span class="n">c</span><span class="o">=#</span><span class="n">data</span><span class="p">.</span><span class="n">name</span>
+  <span class="n">ksort</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">all</span> <span class="o">=</span> <span class="n">num</span><span class="p">()</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">data</span><span class="p">.</span><span class="n">rows</span>  <span class="kr">do</span> <span class="n">numInc</span><span class="p">(</span><span class="n">all</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">])</span> <span class="kr">end</span>
+  <span class="n">cohen</span> <span class="o">=</span> <span class="n">all</span><span class="p">.</span><span class="n">sd</span><span class="o">*</span><span class="n">Lean</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">cohen</span>
+  <span class="n">fyi</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">-- &quot;</span><span class="o">..</span> <span class="n">data</span><span class="p">.</span><span class="n">name</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">..</span> <span class="s2">&quot;----------&quot;</span><span class="p">)</span>
+  <span class="n">cuts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">data</span><span class="p">.</span><span class="n">rows</span><span class="p">,</span><span class="s2">&quot;|.. &quot;</span><span class="p">)</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="n">cat</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="s2">&quot;, &quot;</span><span class="p">)</span> <span class="o">..</span> <span class="s2">&quot;,!klass&quot;</span> <span class="p">)</span>
+  <span class="n">dump</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+<span class="kr">end</span>
+
+<span class="kr">return</span> <span class="p">{</span><span class="n">main</span><span class="o">=</span><span class="kr">function</span><span class="p">()</span> <span class="kr">return</span> <span class="n">label</span><span class="p">(</span><span class="n">rows</span><span class="p">())</span> <span class="kr">end</span><span class="p">}</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
