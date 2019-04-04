@@ -11,7 +11,7 @@ Auto=cat $(Test)/data/auto.csv
 Auto10=cat $(Test)/data/auto10000.csv
 Auto1M=cat $(Test)/data/auto1M.csv
 Weather=cat $(Test)/data/auto.csv
-DSL= dsl/monte_carlo -n 2 -s 1729 -v True| dsl/brooks2
+DSL= dsl/monte_carlo -n 50 -s 1729 -v True| dsl/brooks2
 
 ok:; @bash $(Etc)/lua2bin
 
@@ -28,4 +28,11 @@ eg5:  ok; @$(hi); $(Auto) | dom | bestrest | super | rank
 eg6:  ok; @$(hi); $(Auto10) | dom | bestrest | super | rank
 eg7:  ok; @$(hi); $(Auto1M) | dom | bestrest | super | rank
 
+dsl: ok; @$(hi); $(DSL)
+dom: ok; @$(hi); $(DSL) | dom
+bestrest: ok; @$(hi); $(DSL) | dom | bestrest
+super: ok; @$(hi); $(DSL) | dom | bestrest | super
+rank: ok; @$(hi); $(DSL) | dom | bestrest | super | rank
 
+ourdom: ok; @$(hi); $(DSL) | team-a/node_modules/.bin/ts-node team-a/dom.tsc
+ourdom-input: ok; @$(hi); team-a/node_modules/.bin/ts-node team-a/dom.ts <input
