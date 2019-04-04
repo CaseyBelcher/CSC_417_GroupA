@@ -1,0 +1,4 @@
+#!/usr/bin/luajit
+package.path = package.path .. ';/mnt/duo/src/?.lua' 
+require('lib')
+main(require('dom'))
