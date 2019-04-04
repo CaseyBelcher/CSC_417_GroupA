@@ -11,7 +11,8 @@ Auto=cat $(Test)/data/auto.csv
 Auto10=cat $(Test)/data/auto10000.csv
 Auto1M=cat $(Test)/data/auto1M.csv
 Weather=cat $(Test)/data/auto.csv
-DSL= dsl/monte_carlo -n 50 -s 1729 -v True| dsl/brooks2
+# -v True
+DSL= dsl/monte_carlo -n 600 -s 1729 | dsl/brooks2
 
 ok:; @bash $(Etc)/lua2bin
 
@@ -36,3 +37,9 @@ rank: ok; @$(hi); $(DSL) | ./dom | bestrest | super | rank
 
 ourdom: ok; @$(hi); $(DSL) | team-a/node_modules/.bin/ts-node team-a/dom.ts
 ourdom-input: ok; @$(hi); team-a/node_modules/.bin/ts-node team-a/./dom.ts <dev/input
+dom-input: ok; ./dom <dev/input
+
+.PHONY: dsldiff domdiff dom bestrest super rank
+
+dsldiff: ;make dsl | tee dev/dsl1; make dsl | tee dev/dsl2; diff -Naur dsl1 dsl2
+domdiff: ;make dom | tee dev/theirdom; make ourdom | tee dev/ourdom; vimdiff dev/theirdom dev/ourdom
