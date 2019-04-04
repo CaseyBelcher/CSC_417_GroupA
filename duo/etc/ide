@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PATH="$HOME/.local/bin:$PATH"
+
 #### begin config
 What=${What:-Duo101}
 Who=${Who:-Tim Menzies}
@@ -36,7 +38,7 @@ makedirs()  { mkdir -p "$Src" "$Tmp" "$Bin" "$Etc" "$Test" "$Doc";
 requires()  { cat "$Etc"/requires.txt; }
 vimrc()     { . "$Etc"/dotvimrc.sh;    }
 
-for i in pycco lua5.3 luajit; do
+for i in pycco lua luajit; do
 	if [ ! `which $i` ]; then
 		echo "Aborting. $i is missing."
 		exit 1
@@ -46,14 +48,14 @@ done
 
 makedirs
 exe
-exists  "$Ide"/.gitignore          gitignore
-exists  "$Ide"/requirements.txt    requires
-exists  "$Ide"/CITATION.md         citation
-exists  "$Ide"/LICENSE.md          license
-exists  "$Ide"/CODE_OF_CONDUCT.md  conduct
-exists  "$Ide"/CONTRIBUTING.md     contrib
-exists0 "$Tmp"/.vimrc              vimrc
-exists0 "$Tmp"/.bashrc             bashrc
+# exists  "$Ide"/.gitignore          gitignore
+# exists  "$Ide"/requirements.txt    requires
+# exists  "$Ide"/CITATION.md         citation
+# exists  "$Ide"/LICENSE.md          license
+# exists  "$Ide"/CODE_OF_CONDUCT.md  conduct
+# exists  "$Ide"/CONTRIBUTING.md     contrib
+# exists0 "$Tmp"/.vimrc              vimrc
+# exists0 "$Tmp"/.bashrc             bashrc
 
 
 Bin="$Bin" Here="$Here" What="$What" Lua="$Lua" \
