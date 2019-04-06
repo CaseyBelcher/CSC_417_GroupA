@@ -13,7 +13,7 @@ ok() {
 
 htmls() {
   cd ../src
-  pycco -i -d ../docs *.lua
+  # pycco -i -d ../docs *.lua
 }
 gitready() {
 	git config --global credential.helper 'cache --timeout 3600'
