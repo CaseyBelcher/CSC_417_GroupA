@@ -1,6 +1,39 @@
 # CSC_417_GroupA
 Austen Adler, Bryan Arrington, and Casey Belcher
 
+## Homework 2
+For homework 2, we implemented `duo` using `typescript`.
+
+Easy install/run:
+```bash
+./hw2.sh
+# To test our part
+make dom
+# To test the whole pipeline
+make rank
+```
+Note that the easy run script assumes you do not have node installed. If you already have node installed, the script will work only if you have a recent version (i.e. you execute node by running `node`, not `nodejs`).
+If you have an older version of node installed, please make a new codeanywhere instance.
+
+If that fails, try running the commands individually:
+```bash
+cd duo/src
+
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get -y install nodejs build-essential
+
+cd team-a
+npm i
+cd ..
+ln -s team-a/node_modules .
+
+../etc/ide
+# To test our part
+make dom
+# To test the whole pipeline
+make rank
+```
+
 ## Homework 1A
 Run:
 ```bash
