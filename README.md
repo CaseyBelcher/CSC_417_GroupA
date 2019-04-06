@@ -34,6 +34,8 @@ make dom
 make rank
 ```
 
+Our report for 2A is located at root and is the file 2a_report.pdf. 
+
 ## Homework 1A
 Run:
 ```bash
