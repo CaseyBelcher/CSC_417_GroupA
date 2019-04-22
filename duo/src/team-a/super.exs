@@ -1,3 +1,20 @@
+# run with needed dependencies:
+#
+# mix deps.get
+# mix deps.compile
+# mix run super.exs < superInput
+#
+#
+# original pipeline super implementation:
+#
+# For each independent variable column (prefix is $):
+# 	Sort the rows based on that column
+# 	Call recursive cuts() on that column
+# cuts():
+# 	Attempt to find cut with argMin()
+# 	If cut found, recurse cuts() on either side of cut
+# 	If not found, rewrite the column according to current lo and hi values
+
 defmodule M do
   import Enum
 
@@ -8,7 +25,9 @@ defmodule M do
       first = String.at(x, 0)
       cond do
         (first != "-" and first != "|") -> true
-        true -> false
+        true ->
+          IO.write x
+          false
       end end )
 
     # transform lines into a list of lists of strings, i.e. a table
@@ -23,6 +42,7 @@ defmodule M do
     columns = map(columns, &cuts(&1))
 
 
+
     # TODO: print out columns as a table again
 
   end
@@ -34,7 +54,7 @@ defmodule M do
       acc ->
         cell = at(x, index)
         cond do
-          cell != nil -> acc ++ [cell]
+          (cell != nil and cell != "?") -> acc ++ [cell]
           true -> acc ++ []
         end
         # acc ++ [at(x, index)]
@@ -46,11 +66,47 @@ defmodule M do
     cond do
       # only work with independent variable columns (prefix is $)
       at(column, 0) |> String.at(0) == "$" ->
-        # TODO:
-        IO.puts "stuff will go here"
-      true -> ""
+
+        IO.puts "\n-- #{at(column,0)} ----------"
+
+        # convert column from strings to floats
+        column = map(column, fn x ->
+          float = Float.parse(x)
+          cond do
+            float != :error ->
+              {floatValue, discard} = float
+              floatValue
+            true -> x
+          end
+        end)
+
+        # cohen is just a magic number he uses for calculation
+        cohen = 0.3 * Statistics.stdev(tl(column))
+
+        #return
+        cutsRecursion(column, 1, length(column) - 1,  "|.. ", cohen)
+
+      true -> column
     end
 
+  end
+
+  def cutsRecursion(column, lo, hi, preString, cohen) do
+
+    # -- $nprod ----------
+    # |.. 0.1..9.93
+    # |.. |.. 0.1..2.55
+    # |.. |.. |.. 0.1..2.02
+    # |.. |.. |.. 2.02..2.55
+    # |.. |.. 2.56..9.93
+
+    # txt = pre..rows[lo][c]..".."..rows[hi][c]
+
+    txt = "#{preString}#{at(column,lo)}..#{at(column,hi)}"
+    IO.puts txt
+
+    # return
+    column
   end
 
 
