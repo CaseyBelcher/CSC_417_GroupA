@@ -39,8 +39,10 @@ defmodule M do
     columns = List.foldl(numColumns, [], fn x, acc -> acc ++ [getColumn(x, rows)] end)
 
     # rewrite each column as neccessary using recursive cuts()
-    columns = map(columns, &cuts(&1))
+    # columns = map(columns, &cuts(&1))
 
+    # printTable(columns, length(columns), 0, length(at(columns, 0))) #all columns are assumed to be of the same length
+    printTable(columns, length(columns), 0, length(at(columns, 0))) #all columns are assumed to be of the same length
 
 
     # TODO: print out columns as a table again
@@ -109,6 +111,75 @@ defmodule M do
     column
   end
 
+  defmodule Num do
+    defstruct hi: 0, lo: 0, mu: 0, m2: 0, n: 0, sd: 0, label: ""
+  end
+
+
+  def numInc(x, original) do
+    original = %{original | n: original.n + 1}
+    d = x - original.mu
+    original = %{original |
+      mu: original.mu + d/original.n,
+      m2: original.m2 + d * (x - original.mu)
+    }
+    %{original |
+      hi: (if x > original.hi, do: x, else: original.hi),
+      lo: (if x < original.lo, do: x, else: original.lo),
+      sd: (if original.n >= 2, do: (original.m2/(original.n-1 + :math.pow(10, -32))) |> :math.pow(0.5), else: original.sd)
+    }
+  end
+
+
+  # # TODO: print out columns as a table again
+  # printTable(columns, length(columns), 0, length(at(columns, 0))) #all columns are assumed to be of the same length
+
+
+  #prints the table when given a list of columns and the row to start on
+  def printTable(cols, numCols, row, rowCount) do
+    cond do
+      row < rowCount ->
+        printTableHelper(cols, numCols, row, rowCount)
+      true -> ""
+    end
+  end
+
+  #This method is used by printTable in its effort to print the table. It prints the
+  #value at the given row and col, then calls printRow with the value of col incrimented by 1
+  #param cols       : the list of columns in the table
+  #param numCols    : the number of columns in the table
+  #param row        : the row of the cell to print
+  #param rowCount   : the number of rows in the table
+  def printTableHelper(cols, numCols, row, rowCount) do
+    printRow(cols, 0, numCols, row)
+    printTable(cols, numCols, row + 1, rowCount)
+  end
+
+  #prints a specific row in the table
+  #param cols      : the list of columns in the table
+  #param col       : the column of the cell to print
+  #param numCols   : the number of columns in the table
+  #param row       : the row of the cell to print
+  def printRow(cols, col, numCols, row) do
+    cond do
+      col < numCols ->
+        printRowHelper(cols, col, numCols, row)
+      true -> IO.puts "\n"
+    end
+  end
+
+  #This method is used by printRow in its effort to print a single row of the table.
+  #It prints the value at the given row and col, then calls printRow with the value
+  #of col incrimented by 1
+  #param cols: the list of columns in the table
+  #param col: the column of the cell to print
+  #param numCols: the number of columns in the table
+  #param row: the row of the cell to print
+  def printRowHelper(cols, col, numCols, row) do
+    IO.write( at( at(cols, col), row ) )
+    printRow(cols, col + 1, numCols, row)
+  end
+  ########## end jank/broken code ##########
 
 end
 
