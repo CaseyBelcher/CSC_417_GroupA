@@ -36,6 +36,8 @@ make rank
 
 Our report for 2A is located at root and is the file 2a_report.pdf. 
 
+Our reprot for 2B is located at root and the file is 2b_report.pdf.
+
 ## Homework 1A
 Run:
 ```bash
