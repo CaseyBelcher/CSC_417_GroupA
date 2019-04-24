@@ -36,8 +36,8 @@ makedirs()  { mkdir -p "$Src" "$Tmp" "$Bin" "$Etc" "$Test" "$Doc";
 requires()  { cat "$Etc"/requires.txt; }
 vimrc()     { . "$Etc"/dotvimrc.sh;    }
 
-# for i in pycco lua5.3 luajit; do
-for i in lua5.3 luajit; do
+# for i in pycco lua luajit; do
+for i in lua luajit; do
 	if [ ! `which $i` ]; then
 		echo "Aborting. $i is missing."
 		exit 1

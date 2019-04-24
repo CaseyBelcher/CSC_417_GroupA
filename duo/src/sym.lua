@@ -26,6 +26,8 @@ function symInc(t,x,   new,old)
   t.counts[x] = new
   if new > t.most then
     t.most, t.mode = new, x end
+  print("new new")
+  print(new)
   return x
 end
 
@@ -52,16 +54,29 @@ end
 -- Computing the entropy: don't recompute if you've
 -- already done it before.
 
-function symEnt(t,  p)
+function dossymEnt(t,  p)
   if not t._ent then
+    print("a")
+    print(t._ent)
     t._ent=0
-    for x,n in pairs(t.counts) do
-      p      = n/t.n
-      t._ent = t._ent - p * math.log(p,2) end end
+    print("b")
+    for x, n in pairs(t.counts) do
+      print("c")
+      print(n)
+      p       = n/t.n
+      print(p)
+      t._ent = t._ent - p * math.log(p,2)
+      print(t._ent)
+    end
+  end
+  print("got syment for t")
+  print(t._ent)
   return t._ent
 end
 
 function symXpect(i,j,   n)  
+  print("symxpect")
   n = i.n + j.n +0.0001
+  -- print(i.n/n * symEnt(i) + j.n/n * symEnt(j))
   return i.n/n * symEnt(i) + j.n/n * symEnt(j)
 end

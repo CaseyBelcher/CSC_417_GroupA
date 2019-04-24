@@ -81,6 +81,11 @@ function super(data,goal,enough,       rows,most,cohen)
         y = rows[i][goal]
         numInc(nl, x); numDec(nr, x) 
         symInc(sl, y); symDec(sr, y) 
+        print("new sl")
+        print(sl.n)
+        print(sl.most)
+        print(sl.counts)
+        print(sl._ent)
         if nl.n >= enough and nr.n >= enough then
           if nl.hi - nl.lo > cohen then
             if nr.hi - nr.lo > cohen then

@@ -32,7 +32,7 @@ eg7:  ok; @$(hi); $(Auto1M) | ./dom | bestrest | super | rank
 dsl: ok; @$(hi); $(DSL)
 dom: ok; @$(hi); $(DSL) | ./dom
 bestrest: ok; @$(hi); $(DSL) | ./dom | bestrest
-super: ok; @$(hi); $(DSL) | ./dom | bestrest | super
+super: ok; $(hi); $(DSL) | ./dom | bestrest | super
 rank: ok; @$(hi); $(DSL) | ./dom | bestrest | super | rank
 
 ourdom: ok; @$(hi); $(DSL) | team-a/node_modules/.bin/ts-node team-a/dom.ts
