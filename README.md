@@ -1,8 +1,8 @@
 # CSC_417_GroupA
 Austen Adler, Bryan Arrington, and Casey Belcher
 
-## Homework 2
-For homework 2, we implemented `duo` using `typescript`.
+## Project 2 part 1
+For project 2 part 1, we implemented `duo` using `typescript`.
 
 Easy install/run:
 ```bash
@@ -36,7 +36,12 @@ make rank
 
 Our report for 2A is located at root and is the file 2a_report.pdf. 
 
-Our reprot for 2B is located at root and the file is 2b_report.pdf.
+
+
+## Project 2 part 2
+Our report for 2B is located at root and the file is 2b_report.pdf.
+
+
 
 ## Homework 1A
 Run:
